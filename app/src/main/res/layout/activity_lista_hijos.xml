@@ -6,9 +6,8 @@
     android:layout_height="match_parent"
     tools:context="com.appvacunacionaplicationdomaincompany.appvacunacion.ListaHijos">>
 
-    <TextView
-        android:id="@+id/welcomeText"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Nueva Actividad!!!" />
+    <ListView
+        android:id="@+id/listViewHijos"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"></ListView>
 </LinearLayout>

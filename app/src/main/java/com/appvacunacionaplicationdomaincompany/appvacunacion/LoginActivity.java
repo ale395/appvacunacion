@@ -27,6 +27,7 @@ public class LoginActivity extends AppCompatActivity {
     public static final String ipServer = "192.168.0.21";
     public static final String portServer = "8080";
     public static final String dirWebServerUsuario = "/control_vacunas_web_service/webresources/pkg_entidad.usuario/usuario/";
+    public static final String dirWebServerHijos = "/control_vacunas_web_service/webresources/pkg_entidad.hijo/padre/";
 
     Button btnLogin;
     EditText editText;

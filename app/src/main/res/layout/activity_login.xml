@@ -13,21 +13,36 @@
         android:layout_alignParentTop="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentStart="true"
-        android:layout_marginTop="10dp">
+        android:layout_marginTop="10dp"
+        android:gravity="center_vertical">
 
-        <EditText
-            android:id="@+id/txtCorreo"
+        <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:inputType="text"
-            android:text="alexis.fernandez.rc@gmail.com" />
+            android:orientation="horizontal">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="E-mail: "
+                android:textColor="#000000"
+                android:textSize="18dp"/>
+
+            <EditText
+                android:id="@+id/txtCorreo"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="text"
+                android:text="alexis.fernandez.rc@gmail.com"/>
+        </LinearLayout>
 
         <Button
             android:id="@+id/btnLogin"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:text="¡Pulsa aqui!" />
+            android:layout_width="120dp"
+            android:layout_height="60dp"
+            android:layout_gravity="center_horizontal"
+            android:text="Ingresar"
+            />
 
         <TextView
             android:id="@+id/texto"
