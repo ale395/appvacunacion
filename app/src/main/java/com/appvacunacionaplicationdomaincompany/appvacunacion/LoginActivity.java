@@ -1,10 +1,12 @@
 package com.appvacunacionaplicationdomaincompany.appvacunacion;
 
+import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -16,45 +18,53 @@ import android.widget.Toast;
 
 import com.appvacunacionaplicationdomaincompany.appvacunacion.appvacunacion.json.parser.UsuarioJSONparser;
 import com.appvacunacionaplicationdomaincompany.appvacunacion.appvacunacion.modelos.Usuario;
+import com.google.android.gms.auth.api.Auth;
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions;
+import com.google.android.gms.auth.api.signin.GoogleSignInResult;
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.SignInButton;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
-    public static final String ipServer = "192.168.0.21";
+    public static final String ipServer = "192.168.43.3";
     public static final String portServer = "8080";
     public static final String dirWebServerUsuario = "/control_vacunas_web_service/webresources/pkg_entidad.usuario/usuario/";
     public static final String dirWebServerHijos = "/control_vacunas_web_service/webresources/pkg_entidad.hijo/padre/";
+    private GoogleApiClient googleApiClient;
+    private ProgressDialog progress;
 
-    Button btnLogin;
-    EditText editText;
+    SignInButton btnGoogle;
     Usuario thisUsuario;
-    TextView texto;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_login);
 
-        editText = (EditText)findViewById(R.id.txtCorreo);
-        btnLogin = (Button)findViewById(R.id.btnLogin);
-        texto = (TextView)findViewById(R.id.texto);
+        btnGoogle = (SignInButton)findViewById(R.id.btnGoogle);
+        progress = new ProgressDialog(this);
 
-        btnLogin.setOnClickListener(new View.OnClickListener() {
+        GoogleSignInOptions gso = new GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN).requestEmail().build();
+
+        googleApiClient = new GoogleApiClient.Builder(this).enableAutoManage(this, this).addApi(Auth.GOOGLE_SIGN_IN_API, gso).build();
+
+        btnGoogle.setOnClickListener(new View.OnClickListener(){
+
             @Override
             public void onClick(View v) {
+                progress.setMessage("Iniciando sesión...");
+                progress.show();
                 if (isOnLine()){
-                    if (editText.getText().toString() != null && editText.getText().toString().length() > 0){
-
-                        validarUsuario(editText.getText().toString());
-
-                    }else{
-                        Toast.makeText(getApplicationContext(), "Introduzca un usuario válido!",  Toast.LENGTH_SHORT).show();
-                    }
+                    Intent intent = Auth.GoogleSignInApi.getSignInIntent(googleApiClient);
+                    startActivityForResult(intent, 111);
                 }else{
+                    progress.dismiss();
                     Toast.makeText(getApplicationContext(), "Sin Conexión", Toast.LENGTH_SHORT).show();
                 }
             }
@@ -80,6 +90,30 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == 111){
+            GoogleSignInResult result = Auth.GoogleSignInApi.getSignInResultFromIntent(data);
+            handleSignInResult(result);
+        }
+    }
+
+    private void handleSignInResult(GoogleSignInResult result) {
+        if (result.isSuccess()){
+            validarUsuario(result.getSignInAccount().getEmail());
+        }else{
+            progress.dismiss();
+            Toast.makeText(getApplicationContext(), "No se pudo iniciar sesión", Toast.LENGTH_SHORT).show();
+        }
+    }
+
     private class AsynTaskUsuario extends AsyncTask<String, String, String> {
 
         @Override
@@ -97,10 +131,11 @@ public class LoginActivity extends AppCompatActivity {
         protected void onPostExecute(String s) {
             super.onPostExecute(s);
             if (s == null){
-                texto.setText("Nulo");
+                progress.dismiss();
                 Toast.makeText(getApplicationContext(), "El usuario no esta registrado en la base de datos!", Toast.LENGTH_SHORT).show();
             }else{
                 if (s.equals("C")){
+                    progress.dismiss();
                     Toast.makeText(getApplicationContext(), "No se pudo conectar al Web Service", Toast.LENGTH_LONG).show();
                 }else {
                     thisUsuario = UsuarioJSONparser.parse(s);
@@ -108,6 +143,7 @@ public class LoginActivity extends AppCompatActivity {
                         Intent intent = new Intent(getApplicationContext(), ListaHijos.class);
                         intent.putExtra("usuarioStringJSON", s);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        progress.dismiss();
                         startActivity(intent);
                     }
                 }

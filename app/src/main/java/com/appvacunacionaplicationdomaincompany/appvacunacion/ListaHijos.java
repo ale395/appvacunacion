@@ -10,6 +10,9 @@ import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.Button;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -37,11 +40,13 @@ public class ListaHijos extends AppCompatActivity {
     List<Hijo> hijosList;
     HijosAdapter hijosAdapter;
     ListView listViewHijos;
+    Button btnCerrarSesin;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_lista_hijos);
+        btnCerrarSesin = (Button)findViewById(R.id.btnCerrarSesion);
 
         usuarioStringJSON = getIntent().getStringExtra("usuarioStringJSON");
         usuario = UsuarioJSONparser.parse(usuarioStringJSON);
@@ -51,6 +56,26 @@ public class ListaHijos extends AppCompatActivity {
         hijosList = new ArrayList<>();
 
         validarHijos(usuario.getIdUsuario());
+
+        listViewHijos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Toast.makeText(getApplicationContext(), "Clic Hijos", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        btnCerrarSesin.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                goLogInScreen();
+            }
+        });
+    }
+
+    private void goLogInScreen(){
+        Intent intent = new Intent(this, LoginActivity.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+        startActivity(intent);
     }
 
     //////////////////////////////////
@@ -61,7 +86,6 @@ public class ListaHijos extends AppCompatActivity {
     public void mostrarLista (Context context, List<Hijo> ListHijos){
         hijosAdapter = new HijosAdapter(ListHijos, context);
         listViewHijos.setAdapter(hijosAdapter);
-
     }
 
     public void pedirDatosHijos(String uri){
@@ -97,7 +121,7 @@ public class ListaHijos extends AppCompatActivity {
             super.onPostExecute(s);
             if (s == null){
                 Log.e("Error:", "Nulo");
-                Toast.makeText(getApplicationContext(), "Retorno Nulo OnPostExecute!", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Retorno Nulo OnPostExecute!", Toast.LENGTH_SHORT).show();
             }else{
                 if (s.equals("C")){
                     Toast.makeText(getApplicationContext(), "No se pudo conectar al Web Service", Toast.LENGTH_LONG).show();

@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "134751911258",
+    "firebase_url": "https://vacunacionapp.firebaseio.com",
+    "project_id": "vacunacionapp",
+    "storage_bucket": "vacunacionapp.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:134751911258:android:2956a2ee9192afc7",
+        "android_client_info": {
+          "package_name": "com.appvacunacionaplicationdomaincompany.appvacunacion"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "134751911258-jp22n0s6o6m683eupj8gevlrtluokpru.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.appvacunacionaplicationdomaincompany.appvacunacion",
+            "certificate_hash": "6f98d05f45493d69fb0f9e70fbd3abd92dd29765"
+          }
+        },
+        {
+          "client_id": "134751911258-t5iv93kds9v8hegua4rlioumi0roqh39.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAheFK109nH4KXiY658S8gAb0Zl4FlJQfg"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "134751911258-t5iv93kds9v8hegua4rlioumi0roqh39.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
