@@ -32,10 +32,11 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
-    public static final String ipServer = "192.168.43.3";
+    public static final String ipServer = "192.168.100.132";
     public static final String portServer = "8080";
     public static final String dirWebServerUsuario = "/control_vacunas_web_service/webresources/pkg_entidad.usuario/usuario/";
     public static final String dirWebServerHijos = "/control_vacunas_web_service/webresources/pkg_entidad.hijo/padre/";
+    public static final String dirWebServerVacunas = "/control_vacunas_web_service/webresources/pkg_entidad.vacuna/hijo/";
     private GoogleApiClient googleApiClient;
     private ProgressDialog progress;
 
@@ -142,7 +143,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                     if (thisUsuario != null){
                         Intent intent = new Intent(getApplicationContext(), ListaHijos.class);
                         intent.putExtra("usuarioStringJSON", s);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         progress.dismiss();
                         startActivity(intent);
                     }

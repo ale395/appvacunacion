@@ -23,6 +23,9 @@
         <activity android:name=".ListaHijos">
 
         </activity>
+        <activity android:name=".ListaVacunas">
+
+        </activity>
         <activity android:name=".FiltroActivity">
 
         </activity>

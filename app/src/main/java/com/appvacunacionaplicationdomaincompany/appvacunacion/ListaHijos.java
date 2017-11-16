@@ -60,7 +60,12 @@ public class ListaHijos extends AppCompatActivity {
         listViewHijos.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Toast.makeText(getApplicationContext(), "Clic Hijos", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Clic Hijos", Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), "Pos: "+position+" . Id:"+hijosList.get(position).getId(), Toast.LENGTH_LONG).show();
+                Intent intent = new Intent(getApplicationContext(), ListaVacunas.class);
+                intent.putExtra("idHijo", hijosList.get(position).getId());
+                intent.putExtra("nombreHijo", hijosList.get(position).getNombre());
+                startActivity(intent);
             }
         });
 
@@ -78,7 +83,6 @@ public class ListaHijos extends AppCompatActivity {
         startActivity(intent);
     }
 
-    //////////////////////////////////
     public void validarHijos(int idPadre){
         pedirDatosHijos("http://"+ipServer+":"+portServer+dirWebServerHijos+idPadre);
     };

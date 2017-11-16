@@ -38,4 +38,23 @@ public class HijosJSONparser {
             return null;
         }
     }
+
+    public static Hijo parseHijo(String content)/* throws UnsupportedEncodingException*/ {
+
+        try {
+
+            JSONObject jsonObject = new JSONObject(content);//jsonArray.getJSONObject(i);
+            Hijo hijo = new Hijo();
+
+            hijo.setId(jsonObject.getInt("id"));
+            hijo.setNombre(jsonObject.getString("nombre"));
+            hijo.setEdad(jsonObject.getInt("edad"));
+            hijo.setSexo(jsonObject.getString("sexo"));
+
+            return hijo;
+        } catch (JSONException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
 }
