@@ -1,7 +1,9 @@
 package com.appvacunacionaplicationdomaincompany.appvacunacion;
 
+import android.app.NotificationManager;
 import android.content.Context;
 import android.content.Intent;
+import android.media.RingtoneManager;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.AsyncTask;
@@ -9,6 +11,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.annotation.StringDef;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.app.NotificationCompat;
 import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
@@ -28,6 +31,7 @@ import java.util.List;
 
 import static com.appvacunacionaplicationdomaincompany.appvacunacion.LoginActivity.dirWebServerHijos;
 import static com.appvacunacionaplicationdomaincompany.appvacunacion.LoginActivity.ipServer;
+import static com.appvacunacionaplicationdomaincompany.appvacunacion.LoginActivity.notificacionID;
 import static com.appvacunacionaplicationdomaincompany.appvacunacion.LoginActivity.portServer;
 
 /**
@@ -107,6 +111,19 @@ public class ListaHijos extends AppCompatActivity {
         }
     }
 
+    public void enviarNotificacion(String titulo, String vacuna){
+        NotificationCompat.Builder mBuilder = (NotificationCompat.Builder) new NotificationCompat.Builder(this)
+                .setSmallIcon(R.drawable.vacuna_image)
+                .setContentTitle(titulo)
+                .setContentText(vacuna)
+                .setPriority(NotificationCompat.PRIORITY_MAX)
+                .setSound(RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION));
+
+        NotificationManager manager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+
+        manager.notify(notificacionID, mBuilder.build());
+    }
+
     private class AsynTaskHijos extends AsyncTask<String, String, String> {
 
         @Override
@@ -128,11 +145,11 @@ public class ListaHijos extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), "Retorno Nulo OnPostExecute!", Toast.LENGTH_SHORT).show();
             }else{
                 if (s.equals("C")){
-                    Toast.makeText(getApplicationContext(), "No se pudo conectar al Web Service", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "No se pudo conectar al Web Service!", Toast.LENGTH_LONG).show();
                 }else {
                     hijosList = HijosJSONparser.parse(s);
                     if (hijosList.isEmpty()){
-                        Toast.makeText(getApplicationContext(), "Lista Vacía!", Toast.LENGTH_SHORT).show();
+                        Toast.makeText(getApplicationContext(), "No se han encontrado hijos/as!", Toast.LENGTH_SHORT).show();
                         /*Intent intent = new Intent(getApplicationContext(), ListaHijos.class);
                         intent.putExtra("usuarioStringJSON", s);
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);

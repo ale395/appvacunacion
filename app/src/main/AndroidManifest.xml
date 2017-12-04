@@ -29,6 +29,7 @@
         <activity android:name=".FiltroActivity">
 
         </activity>
+        <service android:name=".ServicioNotificacion"/>
     </application>
 
 </manifest>

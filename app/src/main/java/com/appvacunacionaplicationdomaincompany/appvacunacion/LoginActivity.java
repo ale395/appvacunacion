@@ -24,6 +24,8 @@ import com.google.android.gms.auth.api.signin.GoogleSignInResult;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.SignInButton;
+import com.google.android.gms.common.api.OptionalPendingResult;
+import com.google.android.gms.common.api.ResultCallback;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -32,11 +34,13 @@ import java.util.List;
 
 public class LoginActivity extends AppCompatActivity implements GoogleApiClient.OnConnectionFailedListener {
 
-    public static final String ipServer = "192.168.100.132";
+    public static final String ipServer = "192.168.43.3";
     public static final String portServer = "8080";
     public static final String dirWebServerUsuario = "/control_vacunas_web_service/webresources/pkg_entidad.usuario/usuario/";
     public static final String dirWebServerHijos = "/control_vacunas_web_service/webresources/pkg_entidad.hijo/padre/";
     public static final String dirWebServerVacunas = "/control_vacunas_web_service/webresources/pkg_entidad.vacuna/hijo/";
+    public static final String dirWebServerVacunasUsuario = "/control_vacunas_web_service/webresources/pkg_entidad.vacuna/hijo/";
+    public static final int notificacionID = 123;
     private GoogleApiClient googleApiClient;
     private ProgressDialog progress;
 
@@ -70,6 +74,23 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
                 }
             }
         });
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        OptionalPendingResult<GoogleSignInResult> opr = Auth.GoogleSignInApi.silentSignIn(googleApiClient);
+        if (opr.isDone()){
+            GoogleSignInResult result = opr.get();
+            handleSignInResult(result);
+        } else {
+            opr.setResultCallback(new ResultCallback<GoogleSignInResult>() {
+                @Override
+                public void onResult(@NonNull GoogleSignInResult googleSignInResult) {
+                    handleSignInResult(googleSignInResult);
+                }
+            });
+        }
     }
 
     public void validarUsuario(String email){
@@ -111,7 +132,7 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             validarUsuario(result.getSignInAccount().getEmail());
         }else{
             progress.dismiss();
-            Toast.makeText(getApplicationContext(), "No se pudo iniciar sesión", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(getApplicationContext(), "No se pudo iniciar sesión", Toast.LENGTH_SHORT).show();
         }
     }
 
@@ -137,13 +158,13 @@ public class LoginActivity extends AppCompatActivity implements GoogleApiClient.
             }else{
                 if (s.equals("C")){
                     progress.dismiss();
-                    Toast.makeText(getApplicationContext(), "No se pudo conectar al Web Service", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "No se pudo conectar al Web Service!", Toast.LENGTH_LONG).show();
                 }else {
                     thisUsuario = UsuarioJSONparser.parse(s);
                     if (thisUsuario != null){
                         Intent intent = new Intent(getApplicationContext(), ListaHijos.class);
                         intent.putExtra("usuarioStringJSON", s);
-                        //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                         progress.dismiss();
                         startActivity(intent);
                     }

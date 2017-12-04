@@ -22,6 +22,8 @@ import com.appvacunacionaplicationdomaincompany.appvacunacion.appvacunacion.mode
 import com.appvacunacionaplicationdomaincompany.appvacunacion.appvacunacion.modelos.Vacuna;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import static com.appvacunacionaplicationdomaincompany.appvacunacion.LoginActivity.dirWebServerHijos;
@@ -42,6 +44,8 @@ public class ListaVacunas extends AppCompatActivity {
     List<Vacuna> vacunasList;
     VacunasAdapter vacunasAdapter;
     TextView txtNombreHijo;
+    int columnaOrden;
+    int tipoOrden;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -53,6 +57,8 @@ public class ListaVacunas extends AppCompatActivity {
 
         hijoID = getIntent().getIntExtra("idHijo", hijoID);
         nombreHijo = getIntent().getStringExtra("nombreHijo");
+        columnaOrden = getIntent().getIntExtra("columnaOrden", columnaOrden);
+        tipoOrden = getIntent().getIntExtra("tipoOrden", tipoOrden);
 
         listViewVacunas= (ListView)findViewById(R.id.listViewVacunas);
 
@@ -62,6 +68,9 @@ public class ListaVacunas extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), FiltroActivity.class);
+                intent.putExtra("idHijo", hijoID);
+                intent.putExtra("nombreHijo", nombreHijo);
+                //intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
                 startActivity(intent);
             }
         });
@@ -82,6 +91,60 @@ public class ListaVacunas extends AppCompatActivity {
     public void mostrarLista (Context context, List<Vacuna> ListVacunas){
         vacunasAdapter = new VacunasAdapter(ListVacunas, context);
         listViewVacunas.setAdapter(vacunasAdapter);
+    }
+
+    private class ComparadorVacunasPorNombre implements Comparator<Vacuna> {
+        private boolean asc;
+
+        ComparadorVacunasPorNombre(boolean asc) {
+            this.asc = asc;
+        }
+        @Override
+        public int compare(Vacuna o1, Vacuna o2) {
+            int ret;
+            if (asc) {
+                ret = o1.getNombreVacuna().compareTo(o2.getNombreVacuna());
+            } else {
+                ret = o2.getNombreVacuna().compareTo(o1.getNombreVacuna());
+            }
+            return ret;
+        }
+    }
+
+    private class ComparadorVacunasPorFecha implements Comparator<Vacuna> {
+        private boolean asc;
+
+        ComparadorVacunasPorFecha(boolean asc) {
+            this.asc = asc;
+        }
+        @Override
+        public int compare(Vacuna o1, Vacuna o2) {
+            int ret;
+            if (asc) {
+                ret = o1.getFechaAplicacion().compareTo(o2.getFechaAplicacion());
+            } else {
+                ret = o2.getFechaAplicacion().compareTo(o1.getFechaAplicacion());
+            }
+            return ret;
+        }
+    }
+
+    private class ComparadorVacunasPorAplicacion implements Comparator<Vacuna> {
+        private boolean asc;
+
+        ComparadorVacunasPorAplicacion(boolean asc) {
+            this.asc = asc;
+        }
+        @Override
+        public int compare(Vacuna o1, Vacuna o2) {
+            int ret;
+            if (asc) {
+                ret = o2.getAplicada().compareTo(o1.getAplicada());
+            } else {
+                ret = o1.getAplicada().compareTo(o2.getAplicada());
+            }
+            return ret;
+        }
     }
 
     private class AsynTaskVacunas extends AsyncTask<String, String, String> {
@@ -105,17 +168,37 @@ public class ListaVacunas extends AppCompatActivity {
                 //Toast.makeText(getApplicationContext(), "Retorno Nulo OnPostExecute!", Toast.LENGTH_SHORT).show();
             }else{
                 if (s.equals("C")){
-                    Toast.makeText(getApplicationContext(), "No se pudo conectar al Web Service", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getApplicationContext(), "No se pudo conectar al Web Service!", Toast.LENGTH_LONG).show();
                 }else {
                     Log.e("Vacunas", s);
                     vacunasList = VacunasJSONparser.parse(s);
                     if (vacunasList.isEmpty()){
-                        Toast.makeText(getApplicationContext(), "Lista Vacía!", Toast.LENGTH_SHORT).show();
-                        /*Intent intent = new Intent(getApplicationContext(), ListaHijos.class);
-                        intent.putExtra("usuarioStringJSON", s);
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_CLEAR_TASK | Intent.FLAG_ACTIVITY_NEW_TASK);
-                        startActivity(intent);*/
+                        Toast.makeText(getApplicationContext(), "No se han encontrado Vacunas!", Toast.LENGTH_SHORT).show();
                     }else{
+                        if (columnaOrden == 0){
+                            //ordenar por nombre vacuna
+                            if (tipoOrden == 0){
+                                Collections.sort(vacunasList, new ComparadorVacunasPorNombre(true));//ASCENDENTE
+                            }else{
+                                Collections.sort(vacunasList, new ComparadorVacunasPorNombre(false));//DESCENDENTE
+                            }
+                        }else {
+                            if (columnaOrden == 1){
+                                //ordenar por fecha de aplicación
+                                if (tipoOrden == 0){
+                                    Collections.sort(vacunasList, new ComparadorVacunasPorFecha(true));//ASCENDENTE
+                                }else{
+                                    Collections.sort(vacunasList, new ComparadorVacunasPorFecha(false));//DESCENDENTE
+                                }
+                            }else{
+                                //ordenar por aplicada o no aplicada
+                                if (tipoOrden == 0){
+                                    Collections.sort(vacunasList, new ComparadorVacunasPorAplicacion(true));//ASCENDENTE
+                                }else{
+                                    Collections.sort(vacunasList, new ComparadorVacunasPorAplicacion(false));//DESCENDENTE
+                                }
+                            }
+                        }
                         mostrarLista(getApplication(), vacunasList);
                     }
                 }

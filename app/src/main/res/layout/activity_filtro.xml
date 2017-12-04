@@ -39,7 +39,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
-        android:layout_marginTop="25dp">
+        android:layout_marginTop="25dp"
+        android:checkedButton="@+id/radioAsc">
 
         <RadioButton
             android:id="@+id/radioAsc"
